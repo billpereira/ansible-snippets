@@ -1,6 +1,6 @@
 {
   "name":"ansiblezsnippets",
-  "version":"0.1.2",
+  "version":"0.1.3",
   "engines": {
     "vscode": "^1.0.0"
   },
@@ -8,7 +8,7 @@
   "publisher": "billpereiraz",
   "repository": {
     "type": "git",
-    "url": "https://github.com/billpereira"
+    "url": "https://github.com/billpereira/ansible-snippets.git"
   },
   "categories": ["Snippets"],
   "contributes": {
