@@ -1,0 +1,328 @@
+{
+	// Ansible Snippets
+	// description. The prefix is what is used to trigger the snippet and the body will be expanded and inserted. Possible variables are:
+	// $1, $2 for tab stops, $0 for the final cursor position, and ${1:label}, ${2:another} for placeholders. Placeholders with the 
+	// same ids are connected.
+	// Example:
+	"base": {
+		"prefix": "BASE",
+		"body": [
+			"---",
+			"  - hosts: $1",
+			"    gather_facts: no",
+			"    environment:",
+			"      ZOAU_ROOT: '{{zoau_home}}'    ",
+			"      ZOAU_HOME: '{{zoau_home}}' ",
+			"      PATH: '{{zoau_home}}/bin:{{python_path}}/bin:/bin:.'",
+			"      LIBPATH: '{{zoau_home}}/lib:{{python_path}}/lib:/lib:/usr/lib:.'",
+			"      PYTHONPATH: '{{zoau_home}}/lib'",
+			"      _BPXK_AUTOCVT: 'ON'",
+			"    collections:",
+			"      - ibm.ibm_zos_core",
+			"    ",
+			"    tasks:",
+			"      $0"
+		],
+		"description": "Base playbook"
+	},
+	"vars": {
+		"prefix": "Variables",
+		"body": [
+			"---",
+			"  ansible_port: ${1:22}                                # SSH Port",
+			"  ansible_user: ${2:user}                              # USER used for deploy",
+			"  ansible_password: ${3:password}                        # USER used for deploy",
+			"  ansible_ssh_pipelining: True                    # needed for encoding on ssh connections",
+			"  # System Related Variables",
+			"  zoau_home: ${4:/zoau-v1.0.3}                 # Path for your ZOAU directory",
+			"  python_path: ${5:/usr/lpp/IBM/cyp/v3r8/pyz}  # Path for your Python",
+			"  ansible_python_interpreter: \"{{python_path}}/bin/python3\"",
+			"  _TAG_REDIR_ERR: txt",
+			"  _TAG_REDIR_IN: txt",
+			"  _TAG_REDIR_OUT: txt",
+			"  tgt_tmp_dir: \"/tmp\"",
+			"  ctl_tmp_dir: \"/tmp\"",
+			"  $0"
+		],
+		"description": "Base playbook"
+	},
+	"zos_data_set_sequential": {
+		"prefix": "ZOS_DATA_SET_SEQ",
+		"body": [
+			"- name: $1",
+			"  zos_data_set: ",
+			"    name: $2",
+			"    type: seq",
+			"    state: present",
+			"",
+			"$0"
+		],
+		"description": "Create a sequential data set if it does not exist"
+	},
+	"zos_data_set": {
+		"prefix": "ZOS_DATA_SET",
+		"body": [
+			"- name: ${1:Working with datasets}",
+			"  zos_data_set:",
+			"    name: ${2:Dataset name}",
+			"    type: ${3|KSDS, ESDS, RRDS, LDS, SEQ, PDS, PDSE, LIBRARY, BASIC, LARGE, MEMBER|}",
+			"    record_format: ${4|FB,VB,FBA,VBA|}",
+			"    record_length: ${5:80}",
+			"    space_primary: ${6:1}",
+			"    space_secondary: ${7:1}",
+			"    space_type: ${8|TRK,CYL,K,M,G|}",
+			"    replace: ${9|False,True|}",
+			"    state: ${10|present,absent,cataloged,uncataloged|}",
+			"    # sms_data_class:",
+			"    # sms_management_class:",
+			"    # sms_storage_class:",
+			"    # sms_storage_class:",
+			"    # volumes:",
+			"",
+			"$0",
+		],
+		"description": "Core dataset snippet"
+	},
+	"zos_encode": {
+		"prefix": "ZOS_ENCODE",
+		"body": [
+			"- name: ${1:Task name}",
+			"  zos_encode:",
+			"    src: ${2:Source file}",
+			"    dest: ${3:Dest file}",
+			"    from_encoding: ${4|ISO8859-1,IBM-1047|}",
+			"    to_encoding: ${5|IBM-1047,ISO8859-1|}",
+			"    # backup: yes",
+			"    # backup_compress: yes",
+			"$0"
+		],
+		"description": "Converts the encoding of characters that are read from a UNIX System Services (USS) file or path"
+	},
+	"zos_job_submit": {
+		"prefix": "ZOS_JOB_SUBMIT",
+		"body": [
+			"- name: ${1:Task name}",
+			"  zos_job_submit:",
+			"    src: ${2:JCL Path/DSN}",
+			"    location: ${3|LOCAL,USS,DATA_SET|}",
+			"    wait: ${4:True}",
+			"    return_output: ${5:True}",
+			"    max_rc: ${6:0}",
+			"    # wait_time_s: 60",
+			"    # volume: VOLSER",
+			"    # encoding:",
+			"    #   from: ISO8859-1",
+			"    #   to: IBM-037",
+			"$0"
+		],
+		"description": "Submit JCL from DATA_SET , USS, or LOCAL location."
+	},
+	"zos_copy": {
+		"prefix": "ZOS_COPY",
+		"body": [
+			"- name: ${1:Task name}",
+			"  zos_copy:",
+			"    src: ${2:Source}",
+			"    dest: ${3:Destination}",
+			"    # backup: ",
+			"    # backup_name: ",
+			"    # content: ",
+			"    # encoding: ",
+			"    # force: ",
+			"    # ignore_sftp_stderr: ",
+			"    # is_binary: ",
+			"    # local_follow: ",
+			"    # mode: ",
+			"    # model_ds: ",
+			"    # remote_src: ",
+			"    # sftp_port: ",
+			"    # validate: ",
+			"$0"
+		],
+		"description": "Copy data to z/OS"
+	},
+	
+	"template": {
+		"prefix": "TEMPLATE",
+		"body": [
+			"- name: ${1:Task name}",
+			"  template:",
+			"    src: ${2:Template source}",
+			"    dest: ${3:Src}",
+			"    # owner: bin",
+			"    # group: wheel",
+			"    # mode: '0644'",
+			"$0"
+		],
+		"description": "Template module"
+	},
+	"register": {
+		"prefix": "REGISTER",
+		"body": [
+			"register: ${1:response}",
+			"$0"
+		],
+		"description": "Register a variable",
+	},
+	"debug": {
+		"prefix": "DEBUG",
+		"body": [
+			"- debug:",
+			"    msg: $1",
+			"$0"
+		],
+		"description": "Print message"
+	},
+	"zos_mvs_raw": {
+		"prefix": "ZOS_MVS_RAW",
+		"body": [
+			"- name: $1",
+			"  zos_mvs_raw:",
+			"    program_name: ${2:idcams}",
+			"    # parm:",
+			"    # auth:",
+			"    dds:",
+			"      $0"
+		],
+		"description": "Run a z/OS program"
+	},
+	"dd_concat": {
+		"prefix": "DD_CONCAT",
+		"body": [
+			"- dd_concat:",
+			"    dd_name: ${1:concat}",
+			"    dds:",
+			"      $0",
+		],
+		"description": "dd_concat is used to specify a data set concatenation"
+	},
+	"dd_data_set": {
+		"prefix": "DD_DATA_SET",
+		"body": [
+			"- dd_data_set:",
+			"    dd_name: ${1:DD Name}",
+			"    data_set_name: ${2:DATA.SET.NAME}",
+			"  $0",
+		],
+		"description": "dd_data_set is used to specify a data set"
+	},
+	"dd_dummy": {
+		"prefix": "DD_DUMMY",
+		"body": [
+			"- dd_dummy:",
+			"    dd_name: ${1:DD Name}",
+			"  $0",
+		],
+		"description": "dd_dummy accepts no content input."
+	},
+	"dd_input": {
+		"prefix": "DD_INPUT",
+		"body": [
+			"- dd_input:",
+			"    dd_name: ${1:DD Name}",
+			"    content:",
+			"      - ${1:Can be single line or list of lines}",
+			"  $0",
+		],
+		"description": "dd_input is used to specify an in-stream data set."
+	},
+	"dd_output": {
+		"prefix": "DD_OUTPUT",
+		"body": [
+			"- dd_output:",
+			"    dd_name: ${1:DD Name}",
+			"    return_content:",
+			"      type: ${2|text,base64|}",
+			"  $0",
+		],
+		"description": "Use dd_output to specify - Content sent to the DD should be returned to the user."
+	},
+	"dd_unix": {
+		"prefix": "DD_UNIX",
+		"body": [
+			"- dd_unix:",
+			"    dd_name: ${1:DD Name}",
+			"    path: ${2:/path/to/file}",
+			"  $0",
+		],
+		"description": "The path to a file in UNIX System Services (USS)."
+	},
+	"dd_vio": {
+		"prefix": "DD_VIO",
+		"body": [
+			"- dd_vio:",
+			"    dd_name: ${1:DD Name}",
+			"  $0",
+		],
+		"description": "dd_vio is used to handle temporary data sets."
+	},
+	"zos_fetch": {
+		"prefix": "ZOS_FETCH",
+		"body": [
+			"- name: $1",
+			"  zos_fetch:",
+			"    dest: ${2:Local path where the file or data set will be stored}",
+			"    src: ${3:Name of a UNIX System Services (USS) file, PS(sequential data set), PDS, PDSE, member to be fetched}",
+			"$0",
+		],
+		"description": "Fetch data from z/OS"
+	},
+	"zos_job_output": {
+		"prefix": "ZOS_JOB_OUTPUT",
+		"body": [
+			"- name: ${1:JES Job output with all ddnames}",
+			"  zos_job_output:",
+			"    job_id: ${2:\"STC*\"}",
+			"    job_name: ${3:\"*\"}",
+			"    owner: ${4:\"IBMUSER\"}",
+			"    ddname: ${5:\"?\"}",
+			"$0",
+		],
+		"description": "Display job output"
+	},
+	"zos_lineinfile": {
+		"prefix": "ZOS_LINEINFILE",
+		"body": [
+			"- name: ${1:Ensure we have our own comment added to the partitioned data set member}",
+			"  zos_lineinfile:",
+			"    src: ${2:SOME.PARTITIONED.DATA.SET(DATA)}",
+			"    regexp: ${3:'#^VAR='}",
+			"    insertbefore: ${4:'^VAR='}",
+			"    line: ${5:'# VAR default value'}",
+			"$0",
+		],
+		"description": "Manage textual data on z/OS"
+	},
+	"zos_operator": {
+		"prefix": "ZOS_OPERATOR",
+		"body": [
+			"- name: ${1:Execute an operator command}",
+			"  zos_operator:",
+			"    cmd: ${2:'d iplinfo'}",
+			"    # verbose: ${3:true}",
+			"$0",
+		],
+		"description": "Execute operator command"
+	},
+	"zos_ping": {
+		"prefix": "ZOS_PING",
+		"body": [
+			"- name: ${1:Ping the z/OS host and perform resource checks}",
+			"  zos_ping:",
+			"  register: ${2:result}",
+			"$0",
+		],
+		"description": "Ping z/OS and check dependencies"
+	},
+	"zos_tso_command": {
+		"prefix": "ZOS_TSO_COMMAND",
+		"body": [
+			"- name: ${1:Issue TSO commands}",
+			"  zos_tso_command:",
+			"    commands:",
+			"      - $2",
+			"$0",
+		],
+		"description": "Execute TSO commands"
+	},
+}
