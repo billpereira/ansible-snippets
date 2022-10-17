@@ -1,6 +1,6 @@
 {
   "name":"ansiblezsnippets",
-  "version":"0.1.3",
+  "version":"1.0.0",
   "engines": {
     "vscode": "^1.0.0"
   },
@@ -14,7 +14,7 @@
   "contributes": {
     "snippets": [
       {
-        "language": "yaml",
+        "language": "ansible",
         "path": "./snippets.json"
       }
     ]
