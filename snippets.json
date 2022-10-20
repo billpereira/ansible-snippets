@@ -3,12 +3,11 @@
         "prefix": "newplay",
         "body": [
             "---",
-            "- hosts: $1",
-            "",
-            "  gather_facts: ${1|yes,no|}",
-            "  vars: $3",
-            "  environment: ${4:\"{{ environment_vars \\}\\}\"}",
-            "",
+            "- name: $1",
+            "  hosts: $2",
+            "  gather_facts: ${3|true,false|}",
+            "  vars: $4",
+            "  environment: ${5:\"{{ environment_vars \\}\\}\"}",
             "  tasks:",
             "    $0"
         ],
@@ -39,7 +38,7 @@
         "description": "Standard variables of a new playbook for zOS"
     },
 	"zos_data_set_sequential": {
-		"prefix": "ZOS_DATA_SET_SEQ",
+		"prefix": "zos_data_set_sequential",
 		"body": [
 			"- name: $1",
 			"  ibm.ibm_zos_core.zos_data_set: ",
@@ -64,7 +63,7 @@
         "prefix": "zos_dataset_basic"
     },
 	"zos_data_set": {
-		"prefix": "zos_dataset",
+		"prefix": "zos_data_set",
 		"body": [
 			"- name: ${1:Working with datasets}",
 			"  ibm.ibm_zos_core.zos_data_set:",
@@ -104,7 +103,7 @@
 		"description": "Converts the encoding of characters that are read from a UNIX System Services (USS) file or path"
 	},
 	"zos_job_submit": {
-		"prefix": "ZOS_JOB_SUBMIT",
+		"prefix": "zos_job_submit",
 		"body": [
 			"- name: ${1:Task name}",
 			"  ibm.ibm_zos_core.zos_job_submit:",
@@ -122,6 +121,144 @@
 		],
 		"description": "Submit JCL from DATA_SET , USS, or LOCAL location."
 	},
+    "zos_apf_prog_update":{
+        "body": [
+            "- name: \"${1:Task name}\"",
+            "  ibm.ibm_zos_core.zos_apf: ",
+            "    name: ${2:DATASET}",
+            "    ${3|volume,sms|}: \"${4:******, MCAT, volser or true in case of sms}\"",
+            "    state: ${5|present,absent|}",
+            "    persistent:",
+            "      data_set_name: ${6:DATASET(MEM)}",
+            "      marker: ${7:\"/* {mark} SOME COMMENT {timestamp} */\"}",
+            "      backup: ${8|true,false|}",
+            "$0"
+        ],
+        "description": "zOS APF adding to prog ",
+        "prefix": "zos_apf_prog_update"
+    },
+    "zos_apf_prog_update_batch":{
+        "body": [
+            "- name: \"${1:Task name}\"",
+            "  ibm.ibm_zos_core.zos_apf: ",
+            "    state: ${5|present,absent|}",
+            "    persistent:",
+            "      data_set_name: ${6:DATASET(MEM)}",
+            "      marker: ${7:\"/* {mark} SOME COMMENT {timestamp} */\"}",
+            "      backup: ${8|true,false|}",
+            "    batch:",
+            "      - library: ${2:DATASET}",
+            "        ${3|volume,sms|}: \"${4:******, MCAT, volser or true in case of sms}\"",
+            "$0"
+        ],
+        "description": "zOS APF adding to prog for multiple datasets",
+        "prefix": "zos_apf_prog_update_batch"
+    },
+    "zos_apf_simple":{
+        "body": [
+            "- name: \"${1:Task name}\"",
+            "  ibm.ibm_zos_core.zos_apf: ",
+            "    name: ${2:DATASET}",
+            "    ${3|volume,sms|}: \"${4:******, MCAT, volser or true in case of sms}\"",
+            "    state: ${5|present,absent|}",
+            "$0"
+        ],
+        "description": "zOS APF simple usage for dynamic change, not adding to prog ",
+        "prefix": "zos_apf_simple"
+    },
+    "zos_backup_restore":{
+        "body": [
+            "- name: \"${1:Task name}\"",
+            "  ibm.ibm_zos_core.zos_backup_restore: ",
+            "    operation: ${2|backup,restore|}",
+            "    datasets:",
+			"      include:",
+			"        - $3",
+			"      exclude:",
+			"        - $4",
+            "    space: ${5:1}",
+            "    space_type: ${6:G}",
+            "    backup_name: ${7:PATH or DATASET}",
+            "$0"
+        ],
+        "description": "zOS backup and restore with basics",
+        "prefix": "zos_backup_restore"
+    },
+    "zos_backup_restore_with_volume":{
+        "body": [
+            "- name: \"${1:Task name}\"",
+            "  ibm.ibm_zos_core.zos_backup_restore: ",
+            "    operation: ${2|backup,restore|}",
+            "    datasets:",
+			"      include:",
+			"        - $3",
+			"      exclude:",
+			"        - $4",
+            "    volume: ${5:VOLSER}",
+            "    space: ${6:1}",
+            "    space_type: ${7:G}",
+            "    backup_name: ${8:PATH or DATASET}",
+            "$0"
+        ],
+        "description": "zOS backup and restore with volume",
+        "prefix": "zos_backup_restore_with_volume"
+    },
+    "zos_backup_restore_full_volume":{
+        "body": [
+            "- name: \"${1:Task name}\"",
+            "  ibm.ibm_zos_core.zos_backup_restore: ",
+            "    operation: ${2|backup,restore|}",
+            "    volume: ${3:VOLSER}",
+            "    full_volume: yes",
+            "    space: ${4:1}",
+            "    space_type: ${5:G}",
+            "    backup_name: ${6:PATH or DATASET}",
+            "$0"
+        ],
+        "description": "zOS backup and restore with basics",
+        "prefix": "zos_backup_restore_full_volume"
+    },
+    "zos_backup_sms":{
+        "body": [
+            "- name: \"${1:Task name}\"",
+            "  ibm.ibm_zos_core.zos_backup_restore: ",
+            "    operation: restore",
+            "    volume: ${2:VOLSER}",
+            "    backup_name: ${3:PATH or DATASET}",
+            "    sms_storage_class: ${4:SMSSTOR}",
+            "    sms_management_class: ${5:SMSMNGM}",
+            "$0"
+        ],
+        "description": "zOS restore with SMS storage and management classes to use for the restored data sets.",
+        "prefix": "zos_backup_sms"
+    },
+    "zos_blockinfile_insert_update":{
+        "body": [
+            "- name: \"${1:Task name}\"",
+            "  ibm.ibm_zos_core.zos_blockinfile: ",
+            "    src: ${2:PATH or Dataset}",
+            "    marker: \"/* {mark} ${3:CUSTOM MSG} */\"",
+            "    state: ${4|present,absent|}",
+            "    block: |",
+            "        ${5:Your text \n         goes here}",
+            "$0"
+        ],
+        "description": "zOS Blockinfile module to update block of text in files.",
+        "prefix": "zos_blockinfile_insert_update"
+    },
+    "zos_blockinfile_insert_after":{
+        "body": [
+            "- name: \"${1:Add ZOAU path to PATH in /etc/profile}\"",
+            "  ibm.ibm_zos_core.zos_blockinfile: ",
+            "    src: ${2:/etc/profile}",
+            "    insertafter: ${3:\"PATH=\"}",
+            "    block: |",
+            "      ${4:ZOAU=/path/to/zoau_dir/bin\n      export ZOAU\n      PATH=$ZOAU:$PATH}",
+            "$0"
+        ],
+        "description": "zOS Blockinfile module to update block of text in files",
+        "prefix": "zos_blockinfile_insert_after"
+    },
     "zos_copy_simple":{
         "body": [
             "- name: \"${1:Task name}\"",
@@ -280,14 +417,15 @@
 	"debug": {
 		"prefix": "DEBUG",
 		"body": [
-			"- ansible.builtin.debug:",
-			"    msg: $1",
+			"- name: $1",
+			"  ansible.builtin.debug:",
+			"    ${2|msg,var|}: $3",
 			"$0"
 		],
 		"description": "Print message"
 	},
 	"zos_mvs_raw": {
-		"prefix": "ZOS_MVS_RAW",
+		"prefix": "zos_mvs_raw",
 		"body": [
 			"- name: $1",
 			"  ibm.ibm_zos_core.zos_mvs_raw:",
@@ -335,7 +473,7 @@
 			"    dd_name: ${1:DD Name}",
 			"    content:",
 			"      - ${2:Can be single line or list of lines}",
-			"  $0",
+			"  $0"
 		],
 		"description": "dd_input is used to specify an in-stream data set."
 	},
@@ -346,7 +484,7 @@
 			"    dd_name: ${1:DD Name}",
 			"    return_content:",
 			"      type: ${2|text,base64|}",
-			"  $0",
+			"  $0"
 		],
 		"description": "Use dd_output to specify - Content sent to the DD should be returned to the user."
 	},
@@ -370,18 +508,36 @@
 		"description": "dd_vio is used to handle temporary data sets."
 	},
 	"zos_fetch": {
-		"prefix": "ZOS_FETCH",
+		"prefix": "zos_fetch",
 		"body": [
 			"- name: $1",
 			"  ibm.ibm_zos_core.zos_fetch:",
-			"    dest: ${2:Local path where the file or data set will be stored}",
-			"    src: ${3:Name of a UNIX System Services (USS) file, PS(sequential data set), PDS, PDSE, member to be fetched}",
+			"    src: ${2:Name of a UNIX System Services (USS) file, PS(sequential data set), PDS, PDSE, member to be fetched}",
+			"    dest: ${3:Local path where the file or data set will be stored}",
+			"    flat: ${4|:true,false|}",
+			"    is_binary: ${5|:true,false|}",
+			"    validate_checksum: ${6|:true,false|}",
 			"$0"
 		],
 		"description": "Fetch data from z/OS"
 	},
+	"zos_find": {
+		"prefix": "zos_find",
+		"body": [
+			"- name: $1",
+			"  ibm.ibm_zos_core.zos_find:",
+			"    patterns:",
+			"      - ${2:IMS.LIB.*}",
+			"    contains: ${3:REXX}",
+			"    # excludes: ",
+			"    # volumes: ",
+			"    # resource_type: cluster ",
+			"$0"
+		],
+		"description": "find data on z/OS"
+	},
 	"zos_job_output": {
-		"prefix": "ZOS_JOB_OUTPUT",
+		"prefix": "zos_job_output",
 		"body": [
 			"- name: ${1:JES Job output with all ddnames}",
 			"  ibm.ibm_zos_core.zos_job_output:",
@@ -428,6 +584,11 @@
         "description": "Lookup module for CSV files",
         "prefix": "lookup_csv"
     },
+    "Lookup FILE":{
+        "body": "\"{{ lookup('file','${1:/path/tofile}') }}\"$0",
+        "description": "Simple lookup to get content from file",
+        "prefix": "lookup_file"
+    },
     "Lookup INI":{
         "body": "\"{{ lookup('ini','${1:KEY} section=${2:SECTION} file=${3:/path/tofile}') }}\"$0",
         "description": "Lookup module for INI files",
@@ -452,7 +613,7 @@
         "body": [
             "- name: \"${1:Task description}\"",
             "  include_role:",
-            "    name: ${2:role_name}",
+            "    name: ${2:role_name}"
         ],
         "description": "Include role statement",
         "prefix": "inc_role"

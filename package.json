@@ -1,11 +1,14 @@
 {
-  "name":"ansiblezsnippets",
-  "version":"1.0.0",
+  "name":"ansiblezsnippets2",
+  "version":"1.0.2",
   "engines": {
     "vscode": "^1.0.0"
   },
   "icon":"img/ansiblez.png",
-  "publisher": "billpereiraz",
+  "publisher": "zbillpereira",
+  "extensionDependencies":[
+    "redhat.ansible"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/billpereira/ansible-snippets.git"
@@ -15,6 +18,10 @@
     "snippets": [
       {
         "language": "ansible",
+        "path": "./snippets.json"
+      },
+      {
+        "language": "yaml",
         "path": "./snippets.json"
       }
     ]
