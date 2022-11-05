@@ -1,6 +1,6 @@
 {
-    "New Playbook": {
-        "prefix": "newplay",
+    "New basic playbook with environment and vars": {
+        "prefix": "new_basic_playbook_with_vars_n_env",
         "body": [
             "---",
             "- name: $1",
@@ -13,7 +13,19 @@
         ],
         "description": "New playbook structure"
     },
-    "Standard Variables":{
+    "New basic playbook ": {
+        "prefix": "new_basic_playbook",
+        "body": [
+            "---",
+            "- name: $1",
+            "  hosts: $2",
+            "  gather_facts: ${3|true,false|}",
+            "  tasks:",
+            "    $0"
+        ],
+        "description": "New playbook structure"
+    },
+    "Standard Variables for Z":{
         "prefix": ["env","var"],
         "body": [
             "---",
@@ -399,31 +411,6 @@
         "description": "zOS Operator module to send mvs commands",
         "prefix": "zos_operator"
     },
-	
-	"template": {
-		"prefix": "TEMPLATE",
-		"body": [
-			"- name: ${1:Task name}",
-			"  ansible.builtin.template:",
-			"    src: ${2:Template source}",
-			"    dest: ${3:Src}",
-			"    # owner: bin",
-			"    # group: wheel",
-			"    # mode: '0644'",
-			"$0"
-		],
-		"description": "Template module"
-	},
-	"debug": {
-		"prefix": "DEBUG",
-		"body": [
-			"- name: $1",
-			"  ansible.builtin.debug:",
-			"    ${2|msg,var|}: $3",
-			"$0"
-		],
-		"description": "Print message"
-	},
 	"zos_mvs_raw": {
 		"prefix": "zos_mvs_raw",
 		"body": [
@@ -514,9 +501,9 @@
 			"  ibm.ibm_zos_core.zos_fetch:",
 			"    src: ${2:Name of a UNIX System Services (USS) file, PS(sequential data set), PDS, PDSE, member to be fetched}",
 			"    dest: ${3:Local path where the file or data set will be stored}",
-			"    flat: ${4|:true,false|}",
-			"    is_binary: ${5|:true,false|}",
-			"    validate_checksum: ${6|:true,false|}",
+			"    flat: ${4|true,false|}",
+			"    is_binary: ${5|true,false|}",
+			"    validate_checksum: ${6|true,false|}",
 			"$0"
 		],
 		"description": "Fetch data from z/OS"
@@ -549,12 +536,37 @@
 		],
 		"description": "Display job output"
 	},
+	"zos_job_query": {
+		"prefix": "zos_job_query",
+		"body": [
+			"- name: ${1:list zos jobs}",
+			"  ibm.ibm_zos_core.zos_job_query:",
+			"    job_id: ${2:\"\"}",
+			"    job_name: ${3:\"\"}",
+			"    owner: ${4:\"\"}",
+			"$0"
+		],
+		"description": "List z/OS job(s) and the current status"
+	},
 	"zos_ping": {
 		"prefix": "ZOS_PING",
 		"body": [
 			"- name: ${1:Ping the z/OS host and perform resource checks}",
 			"  ibm.ibm_zos_core.zos_ping:",
 			"  register: ${2:result}",
+			"$0"
+		],
+		"description": "Ping z/OS and check dependencies"
+	},
+	"zos_mount_basic": {
+		"prefix": "zos_mount_basic",
+		"body": [
+			"- name: ${1:Mount a filesystem}",
+			"  ibm.ibm_zos_core.zos_mount:",
+			"    src: ${2:SOMEUSER.VVV.ZFS}",
+			"    path: ${3:/u/omvsadm/core}",
+			"    fs_type: ${4|HFS,ZFS,NFS,TFS|}",
+			"    state: ${5|absent, mounted, unmounted, present, remounted|}",
 			"$0"
 		],
 		"description": "Ping z/OS and check dependencies"
@@ -578,6 +590,131 @@
             "    ${2:variable}: $0"
         ],
         "description": "set_fact module"
+    },
+	
+	"template": {
+		"prefix": "TEMPLATE",
+		"body": [
+			"- name: ${1:Task name}",
+			"  ansible.builtin.template:",
+			"    src: ${2:Template source}",
+			"    dest: ${3:Src}",
+			"    # owner: bin",
+			"    # group: wheel",
+			"    # mode: '0644'",
+			"$0"
+		],
+		"description": "Template module"
+	},
+	"file": {
+		"prefix": "file",
+		"body": [
+			"- name: ${1:Task name}",
+			"  ansible.builtin.file:",
+			"    path: ${2:/path}",
+			"    mode: ${3:'0644'}",
+			"    state: ${4|absent,directoy,file,hard,link,touch|}",
+			"$0"
+		],
+		"description": "file module"
+	},
+	"apt": {
+		"prefix": "apt",
+		"body": [
+			"- name: ${1:Install apache httpd  (state=present is optional)}",
+			"  ansible.builtin.apt:",
+			"    name: ${2:apache2}",
+			"    state: ${3|absent,build-dep,latest,present,fixed|}",
+			"$0"
+		],
+		"description": "apt module"
+	},
+    "copy_simple":{
+        "body": [
+            "- name: \"${1:Task name}\"",
+            "  ansible.builtin.copy: ",
+            "    ${2|src,content|}: \"${3:Content or path}\"",
+            "    dest: ${4:PATH}",
+            "$0"
+        ],
+        "description": "Copy module",
+        "prefix": "copy_simple"
+    },
+    "pip_simple":{
+        "body": [
+            "- name: \"${1:Task name}\"",
+            "  ansible.builtin.pip: ",
+            "    name: ${2:package}",
+            "$0"
+        ],
+        "description": "pip module",
+        "prefix": "pip_simple"
+    },
+    "shell_simple":{
+        "body": [
+            "- name: \"${1:Task name}\"",
+            "  ansible.builtin.shell: ${2:ls -al}",
+            "$0"
+        ],
+        "description": "pip module",
+        "prefix": "shell_simple"
+    },
+    "cron_simple":{
+        "body": [
+            "- name: \"${1:Task name}\"",
+            "  ansible.builtin.cron: ",
+            "    name: \"${2:Entry name}\"",
+            "    minute: ${3:*}",
+            "    hour: ${4:*}",
+            "    weekday: ${5:*}",
+            "    job: ${6:''}",
+            "    state: ${7|absent,present|}",
+            "$0"
+        ],
+        "description": "Cron module",
+        "prefix": "cron_simple"
+    },
+	"debug": {
+		"prefix": "DEBUG",
+		"body": [
+			"- name: $1",
+			"  ansible.builtin.debug:",
+			"    ${2|msg,var|}: $3",
+			"$0"
+		],
+		"description": "Print message"
+	},
+    "Lineinfile":{
+        "body": [
+            "- name: $1",
+            "  ansible.builtin.lineinfile:",
+            "    path: $2",
+            "    line: ${3:\"{{item\\}\\}\"}",
+            "    create: ${4|yes,no|}",
+            "  with_items:",
+            "    - \"$5\"",
+            "$0"
+        ],
+        "description": "lineinfile with items module",
+        "prefix": "lineinfile_items"
+    },
+    "URI":{
+        "body": [
+            "- name: \"${1:Task name}\"",
+            "  ansible.builtin.uri: ",
+            "    url: \"${2:url}\"",
+            "    method: ${3|GET,POST,PUT,HEAD,DELETE,OPTIONS,PATCH,TRACE,CONNECT,REFRESH|}",
+            "    validate_certs: ${4|yes,no|}",
+            "    body_format: ${5|form-urlencoded,form-multipart,json,raw|}",
+            "    body:",
+            "      ${6:# Body fields}",
+            "    headers:",
+            "      ${7:# Header fields}",
+            "    dest: ${8:/path/for/download}",
+            "$0"
+        ],
+        "description": "",
+        "prefix": "uri"
     },
     "Lookup CSV":{
         "body": "\"{{ lookup('csvfile','new file=${1:/path/tofile} delimiter=${2:;} col=${3:1}') }}\"$0",
@@ -627,36 +764,138 @@
         "description": "Include tasks statement",
         "prefix": "inc_task"
     },
-    "Lineinfile":{
-        "body": [
-            "- name: $1",
-            "  ansible.builtin.lineinfile:",
-            "    path: $2",
-            "    line: ${3:\"{{item\\}\\}\"}",
-            "    create: ${4|yes,no|}",
-            "  with_items:",
-            "    - \"$5\"",
-            "$0"
-        ],
-        "description": "lineinfile with items module",
-        "prefix": "lineinfile_items"
-    },
-    "URI":{
+    "openssl_keypair_simple":{
         "body": [
             "- name: \"${1:Task name}\"",
-            "  ansible.builtin.uri: ",
-            "    url: \"${2:url}\"",
-            "    method: ${3|GET,POST,PUT,HEAD,DELETE,OPTIONS,PATCH,TRACE,CONNECT,REFRESH|}",
-            "    validate_certs: ${4|yes,no|}",
-            "    body_format: ${5|form-urlencoded,form-multipart,json,raw|}",
-            "    body:",
-            "      ${6:# Body fields}",
-            "    headers:",
-            "      ${7:# Header fields}",
-            "    dest: ${8:/path/for/download}",
+            "  community.crypto.openssl_keypair:",
+            "    path: $2",
+            "    passphrase: $3",
+            "    size: ${4:2048}",
+            "    type: ${5|rsa,dsa,ecdsa,ed25519|}",
+            "    force: ${6|true,false|}",
             "$0"
         ],
-        "description": "",
-        "prefix": "uri"
+        "description": "Openssl Key Pair module",
+        "prefix": "openssl_keypair_simple"
+    },
+    "openssl_csr_simple":{
+        "body": [
+            "- name: \"${1:Task name}\"",
+            "  community.crypto.openssl_csr:",
+            "    path: $2",
+            "    privatekey_path: $3",
+            "    privatekey_passphrase: $4",
+            "    country_name: $5",
+            "    organization_name: $6",
+            "    email_address: $7",
+            "    common_name: $8",
+            "    subject_alt_name: $9",
+            "$0"
+        ],
+        "description": "Openssl CSR module",
+        "prefix": "openssl_csr_simple"
+    },
+    "openssl_privatekey_simple":{
+        "body": [
+            "- name: \"${1:Task name}\"",
+            "  community.crypto.openssl_privatekey:",
+            "    path: $2",
+            "    passphrase: $3",
+            "    size: ${4:2048}",
+            "$0"
+        ],
+        "description": "Openssl Private Key module",
+        "prefix": "openssl_privatekey_simple"
+    },
+    "openssl_pkcs12_export":{
+        "body": [
+            "- name: \"${1:Task name}\"",
+            "  community.crypto.openssl_pkcs12:",
+            "    action: export",
+            "    path: $2",
+            "    ${3|privatekey_path,privatekey_content|}: $4",
+            "    certificate_path: $5",
+            "    passphrase: $6",
+            "$0"
+        ],
+        "description": "Openssl PKCS#12 Key module",
+        "prefix": "openssl_pkcs12_export"
+    },
+    "openssl_pkcs12_parse":{
+        "body": [
+            "- name: \"${1:Task name}\"",
+            "  community.crypto.openssl_pkcs12:",
+            "    action: parse",
+            "    src: $2",
+            "    path: $3",
+            "    passphrase: $4",
+            "$0"
+        ],
+        "description": "Openssl PKCS#12 Key module",
+        "prefix": "openssl_pkcs12_parse"
+    },
+    "x509_certificate_self_signed":{
+        "body": [
+            "- name: \"${1:Task name}\"",
+            "  community.crypto.x509_certificate:",
+            "    path: $2",
+            "    privatekey_path: $3",
+            "    csr_path: $4",
+            "    provider: selfsigned",
+            "$0"
+        ],
+        "description": "Openssl x509 Certificate Key module",
+        "prefix": "x509_certificate_self_signed"
+    },
+    "x509_certificate_ownca":{
+        "body": [
+            "- name: \"${1:Task name}\"",
+            "  community.crypto.x509_certificate:",
+            "    path: $2",
+            "    csr_path: $3",
+            "    ownca_privatekey_path: $4",
+            "    ownca_path: $5",
+            "    provider: ownca",
+            "$0"
+        ],
+        "description": "Openssl x509 Certificate Key module",
+        "prefix": "x509_certificate_ownca"
+    },
+    "ec2_instance_basic":{
+        "body": [
+            "- name: \"${1:Task name}\"",
+            "  amazon.aws.ec2_instance:",
+            "    instance_type: ${2:t2.micro}",
+            "    image_id: ${3:ami-0caef02b518350c8b}",
+            "    region: ${4:eu-central-1}",
+            "    key_name: $5",
+            "    wait: ${6:true}",
+            "    network:",
+            "      assign_public_ip: ${7:true}",
+            "      security_group: ${8:default}",
+            "    count: $9",
+            "    state: ${10:present}",
+            "    name: $11",
+            "    aws_access_key: \"{{ aws_access_key }}\"",
+            "    aws_secret_key: \"{{ aws_secret_key }}\"",
+            "$0"
+        ],
+        "description": "AWS EC2 Instance module",
+        "prefix": "ec2_instance_basic"
+    },
+    "s3_basic":{
+        "body": [
+            "- name: \"${1:Task name}\"",
+            "  amazon.aws.s3:",
+            "    bucket: $2",
+            "    object: $3",
+            "    src: $4",
+            "    mode: ${5|get,put,delete,create,geturl,getstr,delobj,list,copy|}",
+            "    aws_access_key: \"{{ aws_access_key }}\"",
+            "    aws_secret_key: \"{{ aws_secret_key }}\"",
+            "$0"
+        ],
+        "description": "AWS S3 Bucket module",
+        "prefix": "s3_basic"
     }
 }
