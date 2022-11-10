@@ -53,7 +53,7 @@
 		"prefix": "zos_data_set_sequential",
 		"body": [
 			"- name: $1",
-			"  ibm.ibm_zos_core.zos_data_set: ",
+			"  ibm.ibm_zos_core.zos_data_set:",
 			"    name: $2",
 			"    type: seq",
 			"    state: present",
@@ -65,7 +65,7 @@
     "zos_dataset_basic":{
         "body": [
             "- name: \"${1:Task name}\"",
-            "  ibm.ibm_zos_core.zos_data_set: ",
+            "  ibm.ibm_zos_core.zos_data_set:",
             "    name: ${2:DATASET.NAME}",
             "    type: ${3|KSDS,ESDS,RRDS,LDS,SEQ,PDS,PDSE,LIBRARY,BASIC,LARGE,MEMBER,HFS,ZFS|}",
             "    state: ${4|present,absent,cataloged,uncataloged|}",
@@ -86,7 +86,7 @@
 			"    space_primary: ${6:1}",
 			"    space_secondary: ${7:1}",
 			"    space_type: ${8|TRK,CYL,K,M,G|}",
-			"    replace: ${9|False,True|}",
+			"    replace: ${9|false,true|}",
 			"    state: ${10|present,absent,cataloged,uncataloged|}",
 			"    # sms_data_class:",
 			"    # sms_management_class:",
@@ -136,7 +136,7 @@
     "zos_apf_prog_update":{
         "body": [
             "- name: \"${1:Task name}\"",
-            "  ibm.ibm_zos_core.zos_apf: ",
+            "  ibm.ibm_zos_core.zos_apf:",
             "    name: ${2:DATASET}",
             "    ${3|volume,sms|}: \"${4:******, MCAT, volser or true in case of sms}\"",
             "    state: ${5|present,absent|}",
@@ -152,7 +152,7 @@
     "zos_apf_prog_update_batch":{
         "body": [
             "- name: \"${1:Task name}\"",
-            "  ibm.ibm_zos_core.zos_apf: ",
+            "  ibm.ibm_zos_core.zos_apf:",
             "    state: ${5|present,absent|}",
             "    persistent:",
             "      data_set_name: ${6:DATASET(MEM)}",
@@ -169,7 +169,7 @@
     "zos_apf_simple":{
         "body": [
             "- name: \"${1:Task name}\"",
-            "  ibm.ibm_zos_core.zos_apf: ",
+            "  ibm.ibm_zos_core.zos_apf:",
             "    name: ${2:DATASET}",
             "    ${3|volume,sms|}: \"${4:******, MCAT, volser or true in case of sms}\"",
             "    state: ${5|present,absent|}",
@@ -181,9 +181,9 @@
     "zos_backup_restore":{
         "body": [
             "- name: \"${1:Task name}\"",
-            "  ibm.ibm_zos_core.zos_backup_restore: ",
+            "  ibm.ibm_zos_core.zos_backup_restore:",
             "    operation: ${2|backup,restore|}",
-            "    datasets:",
+            "    data_sets:",
 			"      include:",
 			"        - $3",
 			"      exclude:",
@@ -199,7 +199,7 @@
     "zos_backup_restore_with_volume":{
         "body": [
             "- name: \"${1:Task name}\"",
-            "  ibm.ibm_zos_core.zos_backup_restore: ",
+            "  ibm.ibm_zos_core.zos_backup_restore:",
             "    operation: ${2|backup,restore|}",
             "    datasets:",
 			"      include:",
@@ -218,10 +218,10 @@
     "zos_backup_restore_full_volume":{
         "body": [
             "- name: \"${1:Task name}\"",
-            "  ibm.ibm_zos_core.zos_backup_restore: ",
+            "  ibm.ibm_zos_core.zos_backup_restore:",
             "    operation: ${2|backup,restore|}",
             "    volume: ${3:VOLSER}",
-            "    full_volume: yes",
+            "    full_volume: true",
             "    space: ${4:1}",
             "    space_type: ${5:G}",
             "    backup_name: ${6:PATH or DATASET}",
@@ -233,7 +233,7 @@
     "zos_backup_sms":{
         "body": [
             "- name: \"${1:Task name}\"",
-            "  ibm.ibm_zos_core.zos_backup_restore: ",
+            "  ibm.ibm_zos_core.zos_backup_restore:",
             "    operation: restore",
             "    volume: ${2:VOLSER}",
             "    backup_name: ${3:PATH or DATASET}",
@@ -247,7 +247,7 @@
     "zos_blockinfile_insert_update":{
         "body": [
             "- name: \"${1:Task name}\"",
-            "  ibm.ibm_zos_core.zos_blockinfile: ",
+            "  ibm.ibm_zos_core.zos_blockinfile:",
             "    src: ${2:PATH or Dataset}",
             "    marker: \"/* {mark} ${3:CUSTOM MSG} */\"",
             "    state: ${4|present,absent|}",
@@ -261,7 +261,7 @@
     "zos_blockinfile_insert_after":{
         "body": [
             "- name: \"${1:Add ZOAU path to PATH in /etc/profile}\"",
-            "  ibm.ibm_zos_core.zos_blockinfile: ",
+            "  ibm.ibm_zos_core.zos_blockinfile:",
             "    src: ${2:/etc/profile}",
             "    insertafter: ${3:\"PATH=\"}",
             "    block: |",
@@ -274,7 +274,7 @@
     "zos_copy_simple":{
         "body": [
             "- name: \"${1:Task name}\"",
-            "  ibm.ibm_zos_core.zos_copy: ",
+            "  ibm.ibm_zos_core.zos_copy:",
             "    ${2|src,content|}: \"${3:full path, variable or dataset}\"",
             "    dest: ${4:DATASET/PATH}",
             "$0"
@@ -285,7 +285,7 @@
     "zos_copy_remote":{
         "body": [
             "- name: \"${1:Task name}\"",
-            "  ibm.ibm_zos_core.zos_copy: ",
+            "  ibm.ibm_zos_core.zos_copy:",
             "    src: \"${2:full path}\"",
             "    dest: ${3:DATASET/PATH}",
             "    remote_src: ${4:true}",
@@ -297,7 +297,7 @@
     "zos_copy_binary":{
         "body": [
             "- name: \"${1:Task name}\"",
-            "  ibm.ibm_zos_core.zos_copy: ",
+            "  ibm.ibm_zos_core.zos_copy:",
             "    src: \"${2:full path}\"",
             "    dest: ${3:DATASET/PATH}",
             "    is_binary: ${4:true}",
@@ -309,7 +309,7 @@
     "zos_copy_follow_link":{
         "body": [
             "- name: \"${1:Task name}\"",
-            "  ibm.ibm_zos_core.zos_copy: ",
+            "  ibm.ibm_zos_core.zos_copy:",
             "    src: \"${2:path/to/link}\"",
             "    dest: ${3:DATASET/PATH}",
             "    local_follow: true",
@@ -321,7 +321,7 @@
     "zos_copy_encoding":{
         "body": [
             "- name: \"${1:Task name}\"",
-            "  ibm.ibm_zos_core.zos_copy: ",
+            "  ibm.ibm_zos_core.zos_copy:",
             "    src: \"${2:path/to/link}\"",
             "    dest: ${3:DATASET/PATH}",
             "    encoding:",
@@ -335,7 +335,7 @@
     "zos_copy_file_with_permissions":{
         "body": [
             "- name: \"${1:Task name}\"",
-            "  ibm.ibm_zos_core.zos_copy: ",
+            "  ibm.ibm_zos_core.zos_copy:",
             "    ${2|src,content|}: \"${3:full path, variable or dataset}\"",
             "    dest: ${4:DATASET/PATH}",
             "    mode: ${5:0750}",
@@ -349,7 +349,7 @@
     "zos_copy_file_customized_dest":{
         "body": [
             "- name: \"${1:Task name}\"",
-            "  ibm.ibm_zos_core.zos_copy: ",
+            "  ibm.ibm_zos_core.zos_copy:",
             "    ${2|src,content|}: \"${3:full path, variable or dataset}\"",
             "    dest: ${4:DATASET}",
             "    dest_data_set:",
@@ -391,7 +391,7 @@
     "zos_lineinfile":{
         "body": [
             "- name: \"${1:Task name}\"",
-            "  ibm.ibm_zos_core.zos_lineinfile: ",
+            "  ibm.ibm_zos_core.zos_lineinfile:",
             "    src: ${2:DATASET.NAME.OR.PATH}",
             "    regexp: ${3:'^yourregex'}",
             "    insertafter: ${4:'^yourregex'}",
@@ -404,7 +404,7 @@
     "zos_operator":{
         "body": [
             "- name: \"${1:Task name}\"",
-            "  ibm.ibm_zos_core.zos_operator: ",
+            "  ibm.ibm_zos_core.zos_operator:",
             "    cmd: ${2:mvs command}",
             "$0"
         ],
@@ -618,6 +618,33 @@
 		],
 		"description": "file module"
 	},
+	"user_with_sshkey": {
+		"prefix": "user_with_sshkey",
+		"body": [
+			"- name: ${1:Task name}",
+			"  ansible.builtin.user:",
+			"    name: ${2:userid}",
+			"    comment: ${3:some comment}",
+			"    generate_ssh_key: ${4|true, false|}",
+			"    shell: ${5:/bin/bash|}",
+			"  become: true",
+			"$0"
+		],
+		"description": "User module with private key generated under .ssh"
+	},
+	"user_removal": {
+		"prefix": "user_removal",
+		"body": [
+			"- name: ${1:Task name}",
+			"  ansible.builtin.user:",
+			"    name: ${2:userid}",
+			"    state: absent",
+			"    remove: true",
+			"  become: true",
+			"$0"
+		],
+		"description": "User module to delete user and it's directory"
+	},
 	"apt": {
 		"prefix": "apt",
 		"body": [
@@ -629,10 +656,22 @@
 		],
 		"description": "apt module"
 	},
+	"fetch": {
+		"prefix": "fetch",
+		"body": [
+			"- name: ${1:Fetch file from server}",
+			"  ansible.builtin.fetch:",
+			"    src: ${2:path}",
+			"    dest: ${3:path}",
+			"    flat: true",
+			"$0"
+		],
+		"description": "apt module"
+	},
     "copy_simple":{
         "body": [
             "- name: \"${1:Task name}\"",
-            "  ansible.builtin.copy: ",
+            "  ansible.builtin.copy:",
             "    ${2|src,content|}: \"${3:Content or path}\"",
             "    dest: ${4:PATH}",
             "$0"
@@ -643,7 +682,7 @@
     "pip_simple":{
         "body": [
             "- name: \"${1:Task name}\"",
-            "  ansible.builtin.pip: ",
+            "  ansible.builtin.pip:",
             "    name: ${2:package}",
             "$0"
         ],
@@ -662,7 +701,7 @@
     "cron_simple":{
         "body": [
             "- name: \"${1:Task name}\"",
-            "  ansible.builtin.cron: ",
+            "  ansible.builtin.cron:",
             "    name: \"${2:Entry name}\"",
             "    minute: ${3:*}",
             "    hour: ${4:*}",
@@ -690,7 +729,7 @@
             "  ansible.builtin.lineinfile:",
             "    path: $2",
             "    line: ${3:\"{{item\\}\\}\"}",
-            "    create: ${4|yes,no|}",
+            "    create: ${4|true,false|}",
             "  with_items:",
             "    - \"$5\"",
             "$0"
@@ -701,10 +740,10 @@
     "URI":{
         "body": [
             "- name: \"${1:Task name}\"",
-            "  ansible.builtin.uri: ",
+            "  ansible.builtin.uri:",
             "    url: \"${2:url}\"",
             "    method: ${3|GET,POST,PUT,HEAD,DELETE,OPTIONS,PATCH,TRACE,CONNECT,REFRESH|}",
-            "    validate_certs: ${4|yes,no|}",
+            "    validate_certs: ${4|true,false|}",
             "    body_format: ${5|form-urlencoded,form-multipart,json,raw|}",
             "    body:",
             "      ${6:# Body fields}",
@@ -764,10 +803,10 @@
         "description": "Include tasks statement",
         "prefix": "inc_task"
     },
-    "openssl_keypair_simple":{
+    "openssh_keypair_simple":{
         "body": [
             "- name: \"${1:Task name}\"",
-            "  community.crypto.openssl_keypair:",
+            "  community.crypto.openssh_keypair:",
             "    path: $2",
             "    passphrase: $3",
             "    size: ${4:2048}",
@@ -776,7 +815,7 @@
             "$0"
         ],
         "description": "Openssl Key Pair module",
-        "prefix": "openssl_keypair_simple"
+        "prefix": "openssh_keypair_simple"
     },
     "openssl_csr_simple":{
         "body": [
@@ -861,7 +900,7 @@
         "description": "Openssl x509 Certificate Key module",
         "prefix": "x509_certificate_ownca"
     },
-    "ec2_instance_basic":{
+    "aws_ec2_instance_basic":{
         "body": [
             "- name: \"${1:Task name}\"",
             "  amazon.aws.ec2_instance:",
@@ -881,12 +920,12 @@
             "$0"
         ],
         "description": "AWS EC2 Instance module",
-        "prefix": "ec2_instance_basic"
+        "prefix": "aws_ec2_instance_basic"
     },
-    "s3_basic":{
+    "aws_s3_basic":{
         "body": [
             "- name: \"${1:Task name}\"",
-            "  amazon.aws.s3:",
+            "  amazon.aws.aws_s3:",
             "    bucket: $2",
             "    object: $3",
             "    src: $4",
@@ -896,6 +935,58 @@
             "$0"
         ],
         "description": "AWS S3 Bucket module",
-        "prefix": "s3_basic"
+        "prefix": "aws_s3_basic"
+    },
+    "aws_s3_bucket_basic":{
+        "body": [
+            "- name: \"${1:Task name}\"",
+            "  amazon.aws.s3_bucket:",
+            "    name: $2",
+            "    state: ${3|present,absent|}",
+            "    versioning: ${4|false,true|}",
+            "    aws_access_key: \"{{ aws_access_key }}\"",
+            "    aws_secret_key: \"{{ aws_secret_key }}\"",
+            "$0"
+        ],
+        "description": "AWS S3 Bucket module",
+        "prefix": "aws_s3_bucket_basic"
+    },
+    "aws_s3_create_and_upload":{
+        "body": [
+            "- name: \"${1:Create bucket}\"",
+            "  amazon.aws.s3_bucket:",
+            "    name: $2",
+            "    state: present",
+            "    versioning: ${3|false,true|}",
+            "    aws_access_key: \"{{ aws_access_key }}\"",
+            "    aws_secret_key: \"{{ aws_secret_key }}\"",
+            "",
+            "- name: \"${4:Upload object}\"",
+            "  amazon.aws.aws_s3:",
+            "    bucket: $2",
+            "    object: $5",
+            "    src: $6",
+            "    mode: put",
+            "    aws_access_key: \"{{ aws_access_key }}\"",
+            "    aws_secret_key: \"{{ aws_secret_key }}\"",
+            "$0"
+        ],
+        "description": "AWS S3 Bucket module",
+        "prefix": "aws_s3_create_and_upload"
+    },
+    "posix_acl_simple":{
+        "body": [
+            "- name: \"${1:Set ACL}\"",
+            "  ansible.posix.acl:",
+            "    path: $2",
+            "    entity: ${3:user or group}",
+            "    etype: ${4|group, mask, other, user|}",
+            "    permissions: $5",
+            "    state: ${6|present, absent, query|}",
+            "    recursive: ${7|true, false|}",
+            "$0"
+        ],
+        "description": "Module to work with posix ACL",
+        "prefix": "posix_acl_simple"
     }
 }
